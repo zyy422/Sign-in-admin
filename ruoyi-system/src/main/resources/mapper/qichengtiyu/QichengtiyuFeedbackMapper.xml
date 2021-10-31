@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qichengtiyu.mapper.QichengtiyuFeedbackMapper">
+    
+    <resultMap type="QichengtiyuFeedback" id="QichengtiyuFeedbackResult">
+        <result property="userId"    column="user_id"    />
+        <result property="username"    column="username"    />
+        <result property="comments"    column="comments"    />
+        <result property="commentDatetime"    column="comment_datetime"    />
+    </resultMap>
+
+    <sql id="selectQichengtiyuFeedbackVo">
+        select user_id, username, comments, comment_datetime from qichengtiyu_feedback
+    </sql>
+
+    <select id="selectQichengtiyuFeedbackList" parameterType="QichengtiyuFeedback" resultMap="QichengtiyuFeedbackResult">
+        <include refid="selectQichengtiyuFeedbackVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="comments != null  and comments != ''"> and comments = #{comments}</if>
+            <if test="commentDatetime != null "> and comment_datetime = #{commentDatetime}</if>
+        </where>
+    </select>
+    
+    <select id="selectQichengtiyuFeedbackByUserId" parameterType="Long" resultMap="QichengtiyuFeedbackResult">
+        <include refid="selectQichengtiyuFeedbackVo"/>
+        where user_id = #{userId}
+    </select>
+        
+    <insert id="insertQichengtiyuFeedback" parameterType="QichengtiyuFeedback" useGeneratedKeys="true" keyProperty="userId">
+        insert into qichengtiyu_feedback
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">username,</if>
+            <if test="comments != null and comments != ''">comments,</if>
+            <if test="commentDatetime != null">comment_datetime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="comments != null and comments != ''">#{comments},</if>
+            <if test="commentDatetime != null">#{commentDatetime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQichengtiyuFeedback" parameterType="QichengtiyuFeedback">
+        update qichengtiyu_feedback
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="comments != null and comments != ''">comments = #{comments},</if>
+            <if test="commentDatetime != null">comment_datetime = #{commentDatetime},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteQichengtiyuFeedbackByUserId" parameterType="Long">
+        delete from qichengtiyu_feedback where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteQichengtiyuFeedbackByUserIds" parameterType="String">
+        delete from qichengtiyu_feedback where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+</mapper>

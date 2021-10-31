@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('课程列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>课程id：</label>
+                                <input type="text" name="courseId"/>
+                            </li>
+                            <li>
+                                <label>课程名称：</label>
+                                <input type="text" name="courseName"/>
+                            </li>
+                            <li>
+                                <label>老师名称：</label>
+                                <input type="text" name="courseTeacher"/>
+                            </li>
+                            <li>
+                                <label>课程价格：</label>
+                                <input type="text" name="coursePrice"/>
+                            </li>
+                            <li>
+                                <label>最大上课人数：</label>
+                                <input type="text" name="maxPeople"/>
+                            </li>
+                            <li>
+                                <label>已选课人数：</label>
+                                <input type="text" name="selectedPeople"/>
+                            </li>
+                            <li>
+                                <label>课程地点：</label>
+                                <input type="text" name="courseLocation"/>
+                            </li>
+                            <li>
+                                <label>适应年龄：</label>
+                                <input type="text" name="courseAge"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="qichengtiyu:course:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="qichengtiyu:course:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="qichengtiyu:course:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="qichengtiyu:course:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('qichengtiyu:course:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('qichengtiyu:course:remove')}]];
+        var prefix = ctx + "qichengtiyu/course";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "课程",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'courseId',
+                    title: '课程id',
+                    visible: false
+                },
+                {
+                    field: 'courseName',
+                    title: '课程名称'
+                },
+                {
+                    field: 'courseTeacher',
+                    title: '老师名称'
+                },
+                {
+                    field: 'coursePrice',
+                    title: '课程价格'
+                },
+                {
+                    field: 'maxPeople',
+                    title: '最大上课人数'
+                },
+                {
+                    field: 'selectedPeople',
+                    title: '已选课人数'
+                },
+                {
+                    field: 'courseLocation',
+                    title: '课程地点'
+                },
+                {
+                    field: 'courseDesc',
+                    title: '课程详情'
+                },
+                {
+                    field: 'courseEffect',
+                    title: '课程效果'
+                },
+                {
+                    field: 'courseAge',
+                    title: '适应年龄'
+                },
+                {
+                    field: 'courseArrange',
+                    title: '课程安排'
+                },
+                {
+                    field: 'courseTips',
+                    title: '温馨提示'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.courseId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.courseId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

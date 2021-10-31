@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qichengtiyu.mapper.QichengtiyuCustom">
+    <resultMap type="QichengtiyuCourse" id="QichengtiyuCourseResult">
+        <result property="courseId"    column="course_id"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="courseTeacher"    column="course_teacher"    />
+        <result property="courseType"    column="course_type"    />
+        <result property="coursePrice"    column="course_price"    />
+        <result property="maxPeople"    column="max_people"    />
+        <result property="selectedPeople"    column="selected_people"    />
+        <result property="courseLocation"    column="course_location"    />
+        <result property="courseDesc"    column="course_desc"    />
+        <result property="courseEffect"    column="course_effect"    />
+        <result property="courseAge"    column="course_age"    />
+        <result property="courseArrange"    column="course_arrange"    />
+        <result property="courseTips"    column="course_tips"    />
+        <result property="courseImg"    column="course_img"    />
+    </resultMap>
+
+    <select id="selectAllCourse" resultMap="QichengtiyuCourseResult">
+        select distinct
+            course_id,
+            course_name
+        from
+            qichengtiyu_course
+        order by
+            course_id
+    </select>
+
+    <resultMap type="java.util.HashMap" id="QichengtiyuUserResult">
+        <result property="userId"    column="user_id"    />
+        <result property="username"    column="username"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="order_id"    column="order_id"    />
+    </resultMap>
+    <select id="queryAllUserWithOutSign" resultMap="QichengtiyuUserResult">
+        select
+            a.username,
+            a.user_id,
+            b.order_id
+        from
+            qichengtiyu_user a
+        inner join
+            qichengtiyu_order b
+        on
+            a.user_id=b.student_id
+        and
+            b.course_id=#{courseId}
+        and
+            b.remain_course > 0
+    </select>
+
+</mapper>

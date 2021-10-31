@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qichengtiyu.mapper.QichengtiyuCourseMapper">
+    
+    <resultMap type="QichengtiyuCourse" id="QichengtiyuCourseResult">
+        <result property="courseId"    column="course_id"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="courseTeacher"    column="course_teacher"    />
+        <result property="courseType"    column="course_type"    />
+        <result property="coursePrice"    column="course_price"    />
+        <result property="maxPeople"    column="max_people"    />
+        <result property="selectedPeople"    column="selected_people"    />
+        <result property="courseLocation"    column="course_location"    />
+        <result property="courseDesc"    column="course_desc"    />
+        <result property="courseEffect"    column="course_effect"    />
+        <result property="courseAge"    column="course_age"    />
+        <result property="courseArrange"    column="course_arrange"    />
+        <result property="courseTips"    column="course_tips"    />
+        <result property="courseImg"    column="course_img"    />
+    </resultMap>
+
+    <sql id="selectQichengtiyuCourseVo">
+        select course_id, course_name, course_teacher, course_type, course_price, max_people, selected_people, course_location, course_desc, course_effect, course_age, course_arrange, course_tips, course_img from qichengtiyu_course
+    </sql>
+
+    <select id="selectQichengtiyuCourseList" parameterType="QichengtiyuCourse" resultMap="QichengtiyuCourseResult">
+        <include refid="selectQichengtiyuCourseVo"/>
+        <where>  
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="courseName != null  and courseName != ''"> and course_name like concat('%', #{courseName}, '%')</if>
+            <if test="courseTeacher != null  and courseTeacher != ''"> and course_teacher = #{courseTeacher}</if>
+            <if test="coursePrice != null "> and course_price = #{coursePrice}</if>
+            <if test="maxPeople != null "> and max_people = #{maxPeople}</if>
+            <if test="selectedPeople != null "> and selected_people = #{selectedPeople}</if>
+            <if test="courseLocation != null  and courseLocation != ''"> and course_location = #{courseLocation}</if>
+            <if test="courseDesc != null  and courseDesc != ''"> and course_desc = #{courseDesc}</if>
+            <if test="courseEffect != null  and courseEffect != ''"> and course_effect = #{courseEffect}</if>
+            <if test="courseAge != null  and courseAge != ''"> and course_age = #{courseAge}</if>
+            <if test="courseArrange != null  and courseArrange != ''"> and course_arrange = #{courseArrange}</if>
+            <if test="courseTips != null  and courseTips != ''"> and course_tips = #{courseTips}</if>
+        </where>
+    </select>
+    
+    <select id="selectQichengtiyuCourseByCourseId" parameterType="Long" resultMap="QichengtiyuCourseResult">
+        <include refid="selectQichengtiyuCourseVo"/>
+        where course_id = #{courseId}
+    </select>
+        
+    <insert id="insertQichengtiyuCourse" parameterType="QichengtiyuCourse" useGeneratedKeys="true" keyProperty="courseId">
+        insert into qichengtiyu_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">course_name,</if>
+            <if test="courseTeacher != null and courseTeacher != ''">course_teacher,</if>
+            <if test="courseType != null">course_type,</if>
+            <if test="coursePrice != null">course_price,</if>
+            <if test="maxPeople != null">max_people,</if>
+            <if test="selectedPeople != null">selected_people,</if>
+            <if test="courseLocation != null and courseLocation != ''">course_location,</if>
+            <if test="courseDesc != null and courseDesc != ''">course_desc,</if>
+            <if test="courseEffect != null and courseEffect != ''">course_effect,</if>
+            <if test="courseAge != null and courseAge != ''">course_age,</if>
+            <if test="courseArrange != null and courseArrange != ''">course_arrange,</if>
+            <if test="courseTips != null and courseTips != ''">course_tips,</if>
+            <if test="courseImg != null">course_img,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">#{courseName},</if>
+            <if test="courseTeacher != null and courseTeacher != ''">#{courseTeacher},</if>
+            <if test="courseType != null">#{courseType},</if>
+            <if test="coursePrice != null">#{coursePrice},</if>
+            <if test="maxPeople != null">#{maxPeople},</if>
+            <if test="selectedPeople != null">#{selectedPeople},</if>
+            <if test="courseLocation != null and courseLocation != ''">#{courseLocation},</if>
+            <if test="courseDesc != null and courseDesc != ''">#{courseDesc},</if>
+            <if test="courseEffect != null and courseEffect != ''">#{courseEffect},</if>
+            <if test="courseAge != null and courseAge != ''">#{courseAge},</if>
+            <if test="courseArrange != null and courseArrange != ''">#{courseArrange},</if>
+            <if test="courseTips != null and courseTips != ''">#{courseTips},</if>
+            <if test="courseImg != null">#{courseImg},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQichengtiyuCourse" parameterType="QichengtiyuCourse">
+        update qichengtiyu_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseName != null and courseName != ''">course_name = #{courseName},</if>
+            <if test="courseTeacher != null and courseTeacher != ''">course_teacher = #{courseTeacher},</if>
+            <if test="courseType != null">course_type = #{courseType},</if>
+            <if test="coursePrice != null">course_price = #{coursePrice},</if>
+            <if test="maxPeople != null">max_people = #{maxPeople},</if>
+            <if test="selectedPeople != null">selected_people = #{selectedPeople},</if>
+            <if test="courseLocation != null and courseLocation != ''">course_location = #{courseLocation},</if>
+            <if test="courseDesc != null and courseDesc != ''">course_desc = #{courseDesc},</if>
+            <if test="courseEffect != null and courseEffect != ''">course_effect = #{courseEffect},</if>
+            <if test="courseAge != null and courseAge != ''">course_age = #{courseAge},</if>
+            <if test="courseArrange != null and courseArrange != ''">course_arrange = #{courseArrange},</if>
+            <if test="courseTips != null and courseTips != ''">course_tips = #{courseTips},</if>
+            <if test="courseImg != null">course_img = #{courseImg},</if>
+        </trim>
+        where course_id = #{courseId}
+    </update>
+
+    <delete id="deleteQichengtiyuCourseByCourseId" parameterType="Long">
+        delete from qichengtiyu_course where course_id = #{courseId}
+    </delete>
+
+    <delete id="deleteQichengtiyuCourseByCourseIds" parameterType="String">
+        delete from qichengtiyu_course where course_id in 
+        <foreach item="courseId" collection="array" open="(" separator="," close=")">
+            #{courseId}
+        </foreach>
+    </delete>
+
+</mapper>

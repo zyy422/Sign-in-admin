@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qichengtiyu.mapper.QichengtiyuNewsMapper">
+    
+    <resultMap type="QichengtiyuNews" id="QichengtiyuNewsResult">
+        <result property="newsId"    column="news_id"    />
+        <result property="newsTitle"    column="news_title"    />
+        <result property="newsBackground"    column="news_background"    />
+        <result property="newsLocation"    column="news_location"    />
+        <result property="newsContent"    column="news_content"    />
+        <result property="commentDatetime"    column="comment_datetime"    />
+    </resultMap>
+
+    <sql id="selectQichengtiyuNewsVo">
+        select news_id, news_title, news_background, news_location, news_content, comment_datetime from qichengtiyu_news
+    </sql>
+
+    <select id="selectQichengtiyuNewsList" parameterType="QichengtiyuNews" resultMap="QichengtiyuNewsResult">
+        <include refid="selectQichengtiyuNewsVo"/>
+        <where>  
+            <if test="newsId != null "> and news_id = #{newsId}</if>
+            <if test="newsTitle != null  and newsTitle != ''"> and news_title = #{newsTitle}</if>
+            <if test="newsBackground != null  and newsBackground != ''"> and news_background = #{newsBackground}</if>
+            <if test="newsLocation != null  and newsLocation != ''"> and news_location = #{newsLocation}</if>
+            <if test="newsContent != null  and newsContent != ''"> and news_content = #{newsContent}</if>
+            <if test="commentDatetime != null "> and comment_datetime = #{commentDatetime}</if>
+        </where>
+    </select>
+    
+    <select id="selectQichengtiyuNewsByNewsId" parameterType="Long" resultMap="QichengtiyuNewsResult">
+        <include refid="selectQichengtiyuNewsVo"/>
+        where news_id = #{newsId}
+    </select>
+        
+    <insert id="insertQichengtiyuNews" parameterType="QichengtiyuNews" useGeneratedKeys="true" keyProperty="newsId">
+        insert into qichengtiyu_news
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="newsTitle != null and newsTitle != ''">news_title,</if>
+            <if test="newsBackground != null and newsBackground != ''">news_background,</if>
+            <if test="newsLocation != null and newsLocation != ''">news_location,</if>
+            <if test="newsContent != null and newsContent != ''">news_content,</if>
+            <if test="commentDatetime != null">comment_datetime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="newsTitle != null and newsTitle != ''">#{newsTitle},</if>
+            <if test="newsBackground != null and newsBackground != ''">#{newsBackground},</if>
+            <if test="newsLocation != null and newsLocation != ''">#{newsLocation},</if>
+            <if test="newsContent != null and newsContent != ''">#{newsContent},</if>
+            <if test="commentDatetime != null">#{commentDatetime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQichengtiyuNews" parameterType="QichengtiyuNews">
+        update qichengtiyu_news
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="newsTitle != null and newsTitle != ''">news_title = #{newsTitle},</if>
+            <if test="newsBackground != null and newsBackground != ''">news_background = #{newsBackground},</if>
+            <if test="newsLocation != null and newsLocation != ''">news_location = #{newsLocation},</if>
+            <if test="newsContent != null and newsContent != ''">news_content = #{newsContent},</if>
+            <if test="commentDatetime != null">comment_datetime = #{commentDatetime},</if>
+        </trim>
+        where news_id = #{newsId}
+    </update>
+
+    <delete id="deleteQichengtiyuNewsByNewsId" parameterType="Long">
+        delete from qichengtiyu_news where news_id = #{newsId}
+    </delete>
+
+    <delete id="deleteQichengtiyuNewsByNewsIds" parameterType="String">
+        delete from qichengtiyu_news where news_id in 
+        <foreach item="newsId" collection="array" open="(" separator="," close=")">
+            #{newsId}
+        </foreach>
+    </delete>
+
+</mapper>

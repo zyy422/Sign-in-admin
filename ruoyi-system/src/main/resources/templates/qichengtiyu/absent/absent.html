@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('请假列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>请假序号：</label>
+                                <input type="text" name="absentId"/>
+                            </li>
+                            <li>
+                                <label>课程序号：</label>
+                                <input type="text" name="courseId"/>
+                            </li>
+                            <li>
+                                <label>课程日期：</label>
+                                <input type="text" name="courseDate"/>
+                            </li>
+                            <li>
+                                <label>学生序号：</label>
+                                <input type="text" name="studentId"/>
+                            </li>
+                            <li>
+                                <label>课程名称：</label>
+                                <input type="text" name="courseName"/>
+                            </li>
+                            <li>
+                                <label>是否请假：</label>
+                                <select name="isAbsent" th:with="type=${@dict.getType('sys_yes_no')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>请假日期时间：</label>
+                                <input type="text" class="time-input" placeholder="请选择请假日期时间" name="absentDatetime"/>
+                            </li>
+                            <li>
+                                <label>核销日期时间：</label>
+                                <input type="text" class="time-input" placeholder="请选择核销日期时间" name="checkedDatetime"/>
+                            </li>
+                            <li>
+                                <label>学生昵称：</label>
+                                <input type="text" name="studentNickname"/>
+                            </li>
+                            <li>
+                                <label>学生姓名：</label>
+                                <input type="text" name="username"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="qichengtiyu:absent:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="qichengtiyu:absent:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="qichengtiyu:absent:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="qichengtiyu:absent:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('qichengtiyu:absent:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('qichengtiyu:absent:remove')}]];
+        var isAbsentDatas = [[${@dict.getType('sys_yes_no')}]];
+        var prefix = ctx + "qichengtiyu/absent";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "请假",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'absentId',
+                    title: '请假序号',
+                    visible: false
+                },
+                {
+                    field: 'courseId',
+                    title: '课程序号'
+                },
+                {
+                    field: 'courseDate',
+                    title: '课程日期'
+                },
+                {
+                    field: 'studentId',
+                    title: '学生序号'
+                },
+                {
+                    field: 'courseName',
+                    title: '课程名称'
+                },
+                {
+                    field: 'isAbsent',
+                    title: '是否请假',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(isAbsentDatas, value);
+                    }
+                },
+                {
+                    field: 'absentDatetime',
+                    title: '请假日期时间'
+                },
+                {
+                    field: 'checkedDatetime',
+                    title: '核销日期时间'
+                },
+                {
+                    field: 'studentNickname',
+                    title: '学生昵称'
+                },
+                {
+                    field: 'username',
+                    title: '学生姓名'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.absentId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.absentId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

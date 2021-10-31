@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改用户')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-user-edit" th:object="${qichengtiyuUser}">
+            <input name="userId" th:field="*{userId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">生日：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="birthday" th:value="${#dates.format(qichengtiyuUser.birthday, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用户昵称或网络名称：</label>
+                <div class="col-sm-8">
+                    <input name="nickname" th:field="*{nickname}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用户手机号码：</label>
+                <div class="col-sm-8">
+                    <input name="mobile" th:field="*{mobile}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">学生姓名：</label>
+                <div class="col-sm-8">
+                    <input name="username" th:field="*{username}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "qichengtiyu/user";
+        $("#form-user-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-user-edit').serialize());
+            }
+        }
+
+        $("input[name='birthday']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

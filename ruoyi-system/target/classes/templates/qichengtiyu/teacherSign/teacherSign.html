@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<link th:href="@{/css/jquery.contextMenu.min.css}" rel="stylesheet"/>
+<head>
+    <th:block th:include="include :: header('表单校验')"/>
+</head>
+<body class="gray-bg">
+
+<div class="col-md-6">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>老师代替签到(手动输入学生名称)</h5>
+        </div>
+        <div class="ibox-content">
+            <form class="form-horizontal m-t" id="commentForm" novalidate="novalidate">
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">课程名称：</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="courseId" name="courseName" onchange="queryStudentNames()">
+                            <option th:value="0"></option>
+                            <option th:each="courseName : ${courseNames}" th:value="${courseName.courseId}"
+                                    th:text="${courseName.courseName}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">学生名称：</label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="suggest-demo-1">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-white dropdown-toggle" style="height: 31px" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">签到日期：</label>
+                    <div class="col-sm-9">
+                        <div class="input-group date"><span class="input-group-addon"><i
+                                class="fa fa-calendar"></i></span>
+                            <input id="signDate" type="text" class="form-control" placeholder="请选择日期">
+                        </div>
+                    </div>
+                </div>
+
+                <input id="studentInfo" type="hidden" value="">
+                <input id="studentNameInfo" type="hidden" value="">
+                <input id="orderInfo" type="hidden" value="">
+
+                <div class="form-group">
+                    <div class="col-sm-12 col-sm-offset-3">
+                        <button type="button" class="btn btn-primary" id="button-confirm" >签到</button>
+                        <button onclick="$.modal.close()" class="btn btn-danger" type="button">关闭</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: bootstrap-suggest-js" />
+<script>
+
+
+    $("#button-confirm").click(function(){
+        let courseId=$("#courseId").val();
+        let studentId=$("#studentInfo").val();
+        let signDate=$("#signDate").val();
+        let orderId = $("#orderInfo").val();
+        let studentName = $("#studentNameInfo").val();
+        $.modal.confirm("请核对： 课程名称【"+$("#courseId option:selected").text()+"】，学生名称【"+studentName+"】，学生编号【"+studentId+"】，订单编号【"+orderId+"】,签到课程日期【"+signDate+"】"
+        , function() {
+            signByTeacher();
+        })
+    });
+
+    $("#signDate").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+    function queryStudentNames(){
+        let courseId = $("#courseId").val();
+        $.ajax({
+            url: "/qichengtiyu/teacherSign/getStudents",
+            data: JSON.stringify({'courseId': courseId}),
+            type: "POST",
+            dataType: 'json',
+            contentType : "application/json; charset=utf-8",
+            success: function(data) {
+                $("#studentNames").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#studentNames").append("<option id='"+data[i].order_id + "' value='"+data[i].userId+"'>" +"学生编号:"+data[i].userId +" "+ data[i].username + "</option>");
+                };
+
+                console.log(JSON.stringify(data))
+
+                // 不发送后台ajax查询学生名称
+                var testBsSuggest = $("#suggest-demo-1").bsSuggest({
+                    idField: "order_id",
+                    keyField: "username",
+                    effectiveFields: ["userId", "username", "order_id"],
+                    effectiveFieldsAlias:{userId:"用户编号", username: "姓名", order_id:"课程订单编号"},
+                    data: {value: data}
+                }).on('onDataRequestSuccess', function (e, result) {
+                    console.log('获取学生名称数据成功: ', result);
+                }).on('onSetSelectValue', function (e, keyword, data) {
+                    console.log('选择了: ', keyword, data);
+                    $("#studentInfo").attr("value",data.userId);
+                    $("#orderInfo").attr("value",data.order_id);
+                    $("#studentNameInfo").attr("value",data.username);
+                }).on('onUnsetSelectValue', function (e) {
+                    console.log("取消选择了！");
+                });
+            }
+        });
+    };
+
+    function signByTeacher(){
+        let courseId=$("#courseId").val();
+        let studentId=$("#studentInfo").val();
+        let signDate=$("#signDate").val();
+        let orderId = $("#orderInfo").val();
+        let studentName = $("#studentNameInfo").val();
+        console.log(orderId);
+
+        if (courseId=="" || studentId=="" || signDate=="") {
+            alert("请输入全部完整信息");
+            return false;
+        };
+
+        $.ajax({
+            url: "/qichengtiyu/teacherSign/signByTeacher",
+            data: JSON.stringify({'courseId': courseId,'studentId': studentId,'signDate': signDate,'orderId': orderId}),
+            type: "POST",
+            dataType: 'json',
+            contentType : "application/json; charset=utf-8",
+            success: function(data) {
+                if (data.code == 0) {
+                    $.modal.alert("签到成功！")
+                } else {
+                    $.modal.alert("签到失败！" + data.msg)
+                }
+                console.log(data);
+            }
+        });
+    }
+</script>
+</body>
+</html>

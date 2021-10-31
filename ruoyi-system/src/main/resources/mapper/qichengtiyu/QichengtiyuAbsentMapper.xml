@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qichengtiyu.mapper.QichengtiyuAbsentMapper">
+    
+    <resultMap type="QichengtiyuAbsent" id="QichengtiyuAbsentResult">
+        <result property="absentId"    column="absent_id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="courseDate"    column="course_date"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="isAbsent"    column="isAbsent"    />
+        <result property="absentDatetime"    column="absent_datetime"    />
+        <result property="checkedDatetime"    column="checked_datetime"    />
+        <result property="studentNickname"    column="student_nickname"    />
+        <result property="username"    column="username"    />
+    </resultMap>
+
+    <sql id="selectQichengtiyuAbsentVo">
+        select absent_id, order_id, course_id, course_date, student_id, course_name, isAbsent, absent_datetime, checked_datetime, student_nickname, username from qichengtiyu_absent
+    </sql>
+
+    <select id="selectQichengtiyuAbsentList" parameterType="QichengtiyuAbsent" resultMap="QichengtiyuAbsentResult">
+        <include refid="selectQichengtiyuAbsentVo"/>
+        <where>  
+            <if test="absentId != null "> and absent_id = #{absentId}</if>
+            <if test="courseId != null  and courseId != ''"> and course_id = #{courseId}</if>
+            <if test="courseDate != null  and courseDate != ''"> and course_date = #{courseDate}</if>
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="courseName != null  and courseName != ''"> and course_name like concat('%', #{courseName}, '%')</if>
+            <if test="isAbsent != null "> and isAbsent = #{isAbsent}</if>
+            <if test="absentDatetime != null "> and absent_datetime = #{absentDatetime}</if>
+            <if test="checkedDatetime != null "> and checked_datetime = #{checkedDatetime}</if>
+            <if test="studentNickname != null  and studentNickname != ''"> and student_nickname like concat('%', #{studentNickname}, '%')</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectQichengtiyuAbsentByAbsentId" parameterType="Long" resultMap="QichengtiyuAbsentResult">
+        <include refid="selectQichengtiyuAbsentVo"/>
+        where absent_id = #{absentId}
+    </select>
+        
+    <insert id="insertQichengtiyuAbsent" parameterType="QichengtiyuAbsent" useGeneratedKeys="true" keyProperty="absentId">
+        insert into qichengtiyu_absent
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="courseId != null and courseId != ''">course_id,</if>
+            <if test="courseDate != null and courseDate != ''">course_date,</if>
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="courseName != null and courseName != ''">course_name,</if>
+            <if test="isAbsent != null">isAbsent,</if>
+            <if test="absentDatetime != null">absent_datetime,</if>
+            <if test="checkedDatetime != null">checked_datetime,</if>
+            <if test="studentNickname != null and studentNickname != ''">student_nickname,</if>
+            <if test="username != null and username != ''">username,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="courseId != null and courseId != ''">#{courseId},</if>
+            <if test="courseDate != null and courseDate != ''">#{courseDate},</if>
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="courseName != null and courseName != ''">#{courseName},</if>
+            <if test="isAbsent != null">#{isAbsent},</if>
+            <if test="absentDatetime != null">#{absentDatetime},</if>
+            <if test="checkedDatetime != null">#{checkedDatetime},</if>
+            <if test="studentNickname != null and studentNickname != ''">#{studentNickname},</if>
+            <if test="username != null and username != ''">#{username},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQichengtiyuAbsent" parameterType="QichengtiyuAbsent">
+        update qichengtiyu_absent
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="courseId != null and courseId != ''">course_id = #{courseId},</if>
+            <if test="courseDate != null and courseDate != ''">course_date = #{courseDate},</if>
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
+            <if test="courseName != null and courseName != ''">course_name = #{courseName},</if>
+            <if test="isAbsent != null">isAbsent = #{isAbsent},</if>
+            <if test="absentDatetime != null">absent_datetime = #{absentDatetime},</if>
+            <if test="checkedDatetime != null">checked_datetime = #{checkedDatetime},</if>
+            <if test="studentNickname != null and studentNickname != ''">student_nickname = #{studentNickname},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+        </trim>
+        where absent_id = #{absentId}
+    </update>
+
+    <delete id="deleteQichengtiyuAbsentByAbsentId" parameterType="Long">
+        delete from qichengtiyu_absent where absent_id = #{absentId}
+    </delete>
+
+    <delete id="deleteQichengtiyuAbsentByAbsentIds" parameterType="String">
+        delete from qichengtiyu_absent where absent_id in 
+        <foreach item="absentId" collection="array" open="(" separator="," close=")">
+            #{absentId}
+        </foreach>
+    </delete>
+
+</mapper>

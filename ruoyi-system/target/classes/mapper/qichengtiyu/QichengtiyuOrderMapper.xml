@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qichengtiyu.mapper.QichengtiyuOrderMapper">
+    
+    <resultMap type="QichengtiyuOrder" id="QichengtiyuOrderResult">
+        <result property="orderId"    column="order_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="courseWeek"    column="course_week"    />
+        <result property="payAmt"    column="pay_amt"    />
+        <result property="studentNickname"    column="student_nickname"    />
+        <result property="payTime"    column="pay_time"    />
+        <result property="username"    column="username"    />
+        <result property="totalCourse"    column="total_course"    />
+        <result property="remainCourse"    column="remain_course"    />
+    </resultMap>
+
+    <sql id="selectQichengtiyuOrderVo">
+        select order_id, course_id, course_name, student_id, course_week, pay_amt, student_nickname, pay_time, username, total_course, remain_course from qichengtiyu_order
+    </sql>
+
+    <select id="selectQichengtiyuOrderList" parameterType="QichengtiyuOrder" resultMap="QichengtiyuOrderResult">
+        <include refid="selectQichengtiyuOrderVo"/>
+        <where>  
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="courseName != null  and courseName != ''"> and course_name like concat('%', #{courseName}, '%')</if>
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="courseWeek != null  and courseWeek != ''"> and course_week like concat('%', #{courseWeek}, '%')</if>
+            <if test="payAmt != null "> and pay_amt = #{payAmt}</if>
+            <if test="studentNickname != null  and studentNickname != ''"> and student_nickname like concat('%', #{studentNickname}, '%')</if>
+            <if test="payTime != null "> and pay_time = #{payTime}</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="totalCourse != null "> and total_course = #{totalCourse}</if>
+            <if test="remainCourse != null "> and remain_course = #{remainCourse}</if>
+        </where>
+    </select>
+    
+    <select id="selectQichengtiyuOrderByOrderId" parameterType="Long" resultMap="QichengtiyuOrderResult">
+        <include refid="selectQichengtiyuOrderVo"/>
+        where order_id = #{orderId}
+    </select>
+        
+    <insert id="insertQichengtiyuOrder" parameterType="QichengtiyuOrder" useGeneratedKeys="true" keyProperty="orderId">
+        insert into qichengtiyu_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">course_id,</if>
+            <if test="courseName != null and courseName != ''">course_name,</if>
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="courseWeek != null and courseWeek != ''">course_week,</if>
+            <if test="payAmt != null">pay_amt,</if>
+            <if test="studentNickname != null and studentNickname != ''">student_nickname,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="username != null and username != ''">username,</if>
+            <if test="totalCourse != null">total_course,</if>
+            <if test="remainCourse != null">remain_course,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">#{courseId},</if>
+            <if test="courseName != null and courseName != ''">#{courseName},</if>
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="courseWeek != null and courseWeek != ''">#{courseWeek},</if>
+            <if test="payAmt != null">#{payAmt},</if>
+            <if test="studentNickname != null and studentNickname != ''">#{studentNickname},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="totalCourse != null">#{totalCourse},</if>
+            <if test="remainCourse != null">#{remainCourse},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQichengtiyuOrder" parameterType="QichengtiyuOrder">
+        update qichengtiyu_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="courseName != null and courseName != ''">course_name = #{courseName},</if>
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
+            <if test="courseWeek != null and courseWeek != ''">course_week = #{courseWeek},</if>
+            <if test="payAmt != null">pay_amt = #{payAmt},</if>
+            <if test="studentNickname != null and studentNickname != ''">student_nickname = #{studentNickname},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="totalCourse != null">total_course = #{totalCourse},</if>
+            <if test="remainCourse != null">remain_course = #{remainCourse},</if>
+        </trim>
+        where order_id = #{orderId}
+    </update>
+
+    <delete id="deleteQichengtiyuOrderByOrderId" parameterType="Long">
+        delete from qichengtiyu_order where order_id = #{orderId}
+    </delete>
+
+    <delete id="deleteQichengtiyuOrderByOrderIds" parameterType="String">
+        delete from qichengtiyu_order where order_id in 
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+
+</mapper>

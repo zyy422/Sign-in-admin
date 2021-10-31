@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qichengtiyu.mapper.QichengtiyuCheckinMapper">
+    
+    <resultMap type="QichengtiyuCheckin" id="QichengtiyuCheckinResult">
+        <result property="signId"    column="sign_id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="courseDate"    column="course_date"    />
+        <result property="courseName"    column="course_name"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="isSigned"    column="isSigned"    />
+        <result property="signDatetime"    column="sign_datetime"    />
+        <result property="ischecked"    column="ischecked"    />
+        <result property="studentNickname"    column="student_nickname"    />
+        <result property="username"    column="username"    />
+        <result property="checkedDatetime"    column="checked_datetime"    />
+        <result property="checkinUser"    column="checkin_user"    />
+    </resultMap>
+
+    <sql id="selectQichengtiyuCheckinVo">
+        select sign_id, order_id, course_id, course_date, course_name, student_id, isSigned, sign_datetime, ischecked, student_nickname, username, checked_datetime, checkin_user from qichengtiyu_checkin
+    </sql>
+
+    <select id="selectQichengtiyuCheckinList" parameterType="QichengtiyuCheckin" resultMap="QichengtiyuCheckinResult">
+        <include refid="selectQichengtiyuCheckinVo"/>
+        <where>  
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="courseId != null  and courseId != ''"> and course_id = #{courseId}</if>
+            <if test="courseDate != null  and courseDate != ''"> and course_date = #{courseDate}</if>
+            <if test="courseName != null  and courseName != ''"> and course_name like concat('%', #{courseName}, '%')</if>
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="isSigned != null "> and isSigned = #{isSigned}</if>
+            <if test="signDatetime != null "> and sign_datetime = #{signDatetime}</if>
+            <if test="ischecked != null "> and ischecked = #{ischecked}</if>
+            <if test="studentNickname != null  and studentNickname != ''"> and student_nickname like concat('%', #{studentNickname}, '%')</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="checkedDatetime != null "> and checked_datetime = #{checkedDatetime}</if>
+            <if test="checkinUser != null  and checkinUser != ''"> and checkin_user = #{checkinUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectQichengtiyuCheckinBySignId" parameterType="Long" resultMap="QichengtiyuCheckinResult">
+        <include refid="selectQichengtiyuCheckinVo"/>
+        where sign_id = #{signId}
+    </select>
+        
+    <insert id="insertQichengtiyuCheckin" parameterType="QichengtiyuCheckin" useGeneratedKeys="true" keyProperty="signId">
+        insert into qichengtiyu_checkin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="courseId != null and courseId != ''">course_id,</if>
+            <if test="courseDate != null and courseDate != ''">course_date,</if>
+            <if test="courseName != null and courseName != ''">course_name,</if>
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="isSigned != null">isSigned,</if>
+            <if test="signDatetime != null">sign_datetime,</if>
+            <if test="ischecked != null">ischecked,</if>
+            <if test="studentNickname != null and studentNickname != ''">student_nickname,</if>
+            <if test="username != null and username != ''">username,</if>
+            <if test="checkedDatetime != null">checked_datetime,</if>
+            <if test="checkinUser != null and checkinUser != ''">checkin_user,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="courseId != null and courseId != ''">#{courseId},</if>
+            <if test="courseDate != null and courseDate != ''">#{courseDate},</if>
+            <if test="courseName != null and courseName != ''">#{courseName},</if>
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="isSigned != null">#{isSigned},</if>
+            <if test="signDatetime != null">#{signDatetime},</if>
+            <if test="ischecked != null">#{ischecked},</if>
+            <if test="studentNickname != null and studentNickname != ''">#{studentNickname},</if>
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="checkedDatetime != null">#{checkedDatetime},</if>
+            <if test="checkinUser != null and checkinUser != ''">#{checkinUser},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQichengtiyuCheckin" parameterType="QichengtiyuCheckin">
+        update qichengtiyu_checkin
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="courseId != null and courseId != ''">course_id = #{courseId},</if>
+            <if test="courseDate != null and courseDate != ''">course_date = #{courseDate},</if>
+            <if test="courseName != null and courseName != ''">course_name = #{courseName},</if>
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
+            <if test="isSigned != null">isSigned = #{isSigned},</if>
+            <if test="signDatetime != null">sign_datetime = #{signDatetime},</if>
+            <if test="ischecked != null">ischecked = #{ischecked},</if>
+            <if test="studentNickname != null and studentNickname != ''">student_nickname = #{studentNickname},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="checkedDatetime != null">checked_datetime = #{checkedDatetime},</if>
+            <if test="checkinUser != null and checkinUser != ''">checkin_user = #{checkinUser},</if>
+        </trim>
+        where sign_id = #{signId}
+    </update>
+
+    <delete id="deleteQichengtiyuCheckinBySignId" parameterType="Long">
+        delete from qichengtiyu_checkin where sign_id = #{signId}
+    </delete>
+
+    <delete id="deleteQichengtiyuCheckinBySignIds" parameterType="String">
+        delete from qichengtiyu_checkin where sign_id in 
+        <foreach item="signId" collection="array" open="(" separator="," close=")">
+            #{signId}
+        </foreach>
+    </delete>
+
+</mapper>

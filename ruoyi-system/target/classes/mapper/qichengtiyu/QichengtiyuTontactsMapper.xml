@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qichengtiyu.mapper.QichengtiyuTontactsMapper">
+    
+    <resultMap type="QichengtiyuTontacts" id="QichengtiyuTontactsResult">
+        <result property="tontactsId"    column="tontacts_id"    />
+        <result property="tontactsName"    column="tontacts_name"    />
+        <result property="tontactsPhone"    column="tontacts_phone"    />
+        <result property="tontactsLocation"    column="tontacts_location"    />
+    </resultMap>
+
+    <sql id="selectQichengtiyuTontactsVo">
+        select tontacts_id, tontacts_name, tontacts_phone, tontacts_location from qichengtiyu_tontacts
+    </sql>
+
+    <select id="selectQichengtiyuTontactsList" parameterType="QichengtiyuTontacts" resultMap="QichengtiyuTontactsResult">
+        <include refid="selectQichengtiyuTontactsVo"/>
+        <where>  
+            <if test="tontactsId != null "> and tontacts_id = #{tontactsId}</if>
+            <if test="tontactsName != null  and tontactsName != ''"> and tontacts_name like concat('%', #{tontactsName}, '%')</if>
+            <if test="tontactsPhone != null  and tontactsPhone != ''"> and tontacts_phone = #{tontactsPhone}</if>
+            <if test="tontactsLocation != null  and tontactsLocation != ''"> and tontacts_location = #{tontactsLocation}</if>
+        </where>
+    </select>
+    
+    <select id="selectQichengtiyuTontactsByTontactsId" parameterType="Long" resultMap="QichengtiyuTontactsResult">
+        <include refid="selectQichengtiyuTontactsVo"/>
+        where tontacts_id = #{tontactsId}
+    </select>
+        
+    <insert id="insertQichengtiyuTontacts" parameterType="QichengtiyuTontacts" useGeneratedKeys="true" keyProperty="tontactsId">
+        insert into qichengtiyu_tontacts
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tontactsName != null and tontactsName != ''">tontacts_name,</if>
+            <if test="tontactsPhone != null and tontactsPhone != ''">tontacts_phone,</if>
+            <if test="tontactsLocation != null and tontactsLocation != ''">tontacts_location,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tontactsName != null and tontactsName != ''">#{tontactsName},</if>
+            <if test="tontactsPhone != null and tontactsPhone != ''">#{tontactsPhone},</if>
+            <if test="tontactsLocation != null and tontactsLocation != ''">#{tontactsLocation},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQichengtiyuTontacts" parameterType="QichengtiyuTontacts">
+        update qichengtiyu_tontacts
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tontactsName != null and tontactsName != ''">tontacts_name = #{tontactsName},</if>
+            <if test="tontactsPhone != null and tontactsPhone != ''">tontacts_phone = #{tontactsPhone},</if>
+            <if test="tontactsLocation != null and tontactsLocation != ''">tontacts_location = #{tontactsLocation},</if>
+        </trim>
+        where tontacts_id = #{tontactsId}
+    </update>
+
+    <delete id="deleteQichengtiyuTontactsByTontactsId" parameterType="Long">
+        delete from qichengtiyu_tontacts where tontacts_id = #{tontactsId}
+    </delete>
+
+    <delete id="deleteQichengtiyuTontactsByTontactsIds" parameterType="String">
+        delete from qichengtiyu_tontacts where tontacts_id in 
+        <foreach item="tontactsId" collection="array" open="(" separator="," close=")">
+            #{tontactsId}
+        </foreach>
+    </delete>
+
+</mapper>

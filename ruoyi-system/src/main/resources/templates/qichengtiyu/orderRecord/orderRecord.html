@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<link th:href="@{/css/jquery.contextMenu.min.css}" rel="stylesheet"/>
+<head>
+    <th:block th:include="include :: header('用户列表')"/>
+    <th:block th:include="include :: header('下拉框')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: bootstrap-select-css"/>
+</head>
+<body class="gray-bg">
+
+<div class="col-md-12">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>课程购买</h5>
+        </div>
+
+        <div class="ibox-content">
+            <form class="form-horizontal m-t" id="commentForm" novalidate="novalidate">
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">请输入学生编号：</label>
+                    <div class="col-sm-9">
+                        <input onchange="queryUserName()" type="text" name="studentId" id="studentId"
+                               class="form-control"
+                               placeholder="请输入文本">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">学生名称信息：</label>
+                    <div class="col-sm-9">
+                        <input style="background:#cccccc" id="studentName" value="未知" type="text" class="form-control"
+                               readonly="readonly" placeholder="学生名称信息未知">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">课程名称：</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="courseId" name="courseName">
+                            <option th:value="0"></option>
+                            <option th:each="courseName : ${courseNames}" th:value="${courseName.courseId}"
+                                    th:text="${courseName.courseName}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">支付金额：</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="payAmt" id="payAmt" class="form-control" placeholder="请输入文本">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">购买课程数量：</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="courseCount" id="courseCount" class="form-control" placeholder="请输入文本">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">上课时间</label>
+                    <div class="col-sm-9">
+                        <select id="weekday" class="form-control noselect2 selectpicker"
+                                data-none-selected-text="请选择每周上课时间"
+                                multiple>
+                            <option value="1">星期一</option>
+                            <option value="2">星期二</option>
+                            <option value="3">星期三</option>
+                            <option value="4">星期四</option>
+                            <option value="5">星期五</option>
+                            <option value="6">星期六</option>
+                            <option value="7">星期日</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-12 col-sm-offset-3">
+                        <button type="button" class="btn btn-primary" onclick="orderRecord()">录入</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+</body>
+<script>
+    function orderRecord(){
+        let courseId = $("#courseId").val();
+        let courseName =  $("#courseId option:selected").text();
+        let studentId = $("#studentId").val();
+        let payAmt = $("#payAmt").val();
+        let courseCount = $("#courseCount").val();
+        let weekday = $("#weekday").val();
+        if (weekday.length==0) {
+            alert("请选择上课时间");
+            return false;
+        }
+        var reg = new RegExp("^[0-9]+([.]{1}[0-9]{0,2}){0,1}$");
+        var reg2 = new RegExp("^[0-9]*$");
+        if(!reg.test(payAmt)){
+            alert("支付金额格式不正确");
+            return false;
+        }
+        if(!reg2.test(courseCount)){
+            alert("课程数量请输入数字!");
+            return false;
+        }
+        if (courseId == "" || studentId == "" || payAmt == "" || courseCount == "") {
+            alert("请输入完整信息！");
+            return false;
+        }
+        $.ajax({
+            url: "/qichengtiyu/orderRecord/recordSubmit",
+            data: JSON.stringify({
+                'courseId': courseId,
+                'courseName': courseName,
+                'studentId': studentId,
+                'payAmt': payAmt,
+                'courseCount': courseCount,
+                'weekday': weekday}),
+            type: "POST",
+            dataType: 'json',
+            contentType : "application/json; charset=utf-8",
+            success: function(data) {
+                if (data.code == 0) {
+                    $.modal.alert("课程购买录入成功")
+                } else {
+                    $.modal.alert("购买失败！请检查录入订单数据是否一致")
+                }
+                console.log(data);
+            }
+        });
+    };
+
+    function queryUserName(){
+        var studentId=$("#studentId").val();
+        $.ajax({
+            url: "/qichengtiyu/orderRecord/queryStudentName",
+            data: JSON.stringify({'studentId': studentId}),
+            type: "POST",
+            dataType: 'json',
+            contentType : "application/json; charset=utf-8",
+            success: function(data) {
+                console.log(data.studentName);
+                $("#studentName").text(data.studentName);
+                $("#studentName").val(data.studentName);
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+</script>
+</html>
