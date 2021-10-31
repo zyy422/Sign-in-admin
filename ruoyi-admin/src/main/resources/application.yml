@@ -140,5 +140,5 @@ swagger:
 
 litemall:
   wx:
-    appId: wx0f5b41f2842510cf
-    app-secret: 716e5e3b992b3cfcccc77658b99e0750
+    appId: xxxx
+    app-secret: xxxx
